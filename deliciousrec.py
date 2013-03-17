@@ -41,5 +41,5 @@ def fillItems(user_dict):
                 
     
     # tag='programming'으로 검색시 1st user 값이 ''임. 에러남. 다른 쿼리를 날리니 괜찮아졌으나 fillItems 할 때 요청/응답받는 데이터량이 너무 많음
-    
+    # 실제 원인은 getRecommendation() 작동 시 호출되는 sim_person() 내 조건문이 빠진 것으로 추정. if den==0: return 0
             
