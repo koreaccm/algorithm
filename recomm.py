@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
-critics={'Lisa Rose': {'Lady in the Water':2.5, 'Shakes on a Plane':3.5, 'Just My Luck':3.0, 'Superman Returns':3.5, 'You, Me and Dupree':2.5, 'The Night Listener':3.0},
-         'Gene Seymour': {'Lady in the Water':3.0, 'Shakes on a Plane':3.5, 'Just My Luck':1.5, 'Superman Returns':5.0, 'The Night Listener':3.0, 'You, Me and Dupree':3.5},
+critics={'Lisa Rose': {'Lady in the Water':2.5, 'Snakes on a Plane':3.5, 'Just My Luck':3.0, 'Superman Returns':3.5, 'You, Me and Dupree':2.5, 'The Night Listener':3.0},
+         'Gene Seymour': {'Lady in the Water':3.0, 'Snakes on a Plane':3.5, 'Just My Luck':1.5, 'Superman Returns':5.0, 'The Night Listener':3.0, 'You, Me and Dupree':3.5},
          'Michael Phillips': {'Lady in the Water':2.5, 'Snakes on a Plane':3.0, 'Superman Returns':3.5, 'The Night Listener':4.0},
          'Claudia Puig': {'Snakes on a Plane':3.5, 'Just My Luck':3.0, 'The Night Listener':4.5, 'Superman Returns':4.0, 'You, Me and Dupree':2.5},
          'Mick LaSalle': {'Lady in the Water':3.0, 'Snakes on a Plane':4.0, 'Just My Luck':2.0, 'Superman Returns':3.0, 'The Night Listener':3.0, 'You, Me and Dupree':2.0},
@@ -32,7 +32,7 @@ def sim_person(prefs, p1, p2):
 
     if n==0: return 0
     
-    # 이하는 피어슨 상관계수 공식
+    # 이하는 피어슨 상관점수 공식
     sum1 = sum([prefs[p1][it] for it in si])
     sum2 = sum([prefs[p2][it] for it in si])
 
@@ -93,6 +93,19 @@ def getRecommendations(prefs, person, similarity=sim_person):
     rankings.reverse()
     return rankings
 
+def transformPrefs(prefs):
+    result={}
+    for person in prefs:
+        for item in prefs[person]:
+            result.setdefault(item, {})
+            #물건과 사람 바꾸기는 대입해서 치환시켜 버리면 되는구나
+            result[item][person] = prefs[person][item]
+
+    return result
+
+
+
+            
 
             
             
