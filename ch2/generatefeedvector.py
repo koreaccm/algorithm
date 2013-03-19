@@ -8,7 +8,7 @@ def getwordcounts(url):
     
     # 모든 게시글별로 루프 돌림
     # entry 객체 아래 내용에 게시물 관련 내용들이 나옴. xml 샘플 참조. 
-    # 일부 feedlist 에서 'title'이 없어 feedparser가 에러남. feedlist의 RSS 형태를 열어보고 feedparser로 해결방법 찾아보기.
+    # 일부 feedlist 에서 'title'이 없어 feedparser가 에러남. feedlist의 RSS 형태를 열어보고 feedparser로 해결방법 찾아보기. 8번째 feed가 잘못 된거였
     for e in d.entries:
         if 'summary' in e: summary=e.summary
         else: summary=e.description

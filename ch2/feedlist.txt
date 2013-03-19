@@ -4,3 +4,5 @@ http://battellemedia.com/index.xml
 http://blog.guykawasaki.com/index.rdf
 http://blog.outer-court.com/rss.xml
 http://feeds.searchenginewatch.com/sewblog
+http://blog.topix.net/index.rdf
+http://abcnews.go.com/blogs/headlines/investigative/feed/
