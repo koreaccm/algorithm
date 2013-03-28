@@ -39,4 +39,18 @@ class bicluster:
         self.vec=vec
         self.id=id
         self.distance=distance
+
+def hcluster(rows, distance=pearson):
+    distances={}
+    currentclustid=-1
+    
+    clust=[bicluster(row[i], id=i) for i in range(len(rows))]
+    
+    # clust에 2개 이상의 리스트가 존재하면,
+    while len(clust)>1:
+        # 최저 좌표 한 쌍은 row=0, col=1
+        lowestpair=(0,1)
+        # class bicluste 중  __init__ 에서 미리 정의한 부분이 나옴
+        closest=distance(clust[0].vec, clust[1].vec)
         
+                
