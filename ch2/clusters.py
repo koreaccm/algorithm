@@ -53,4 +53,5 @@ def hcluster(rows, distance=pearson):
         # class bicluste 중  __init__ 에서 미리 정의한 부분이 나옴
         closest=distance(clust[0].vec, clust[1].vec)
         
+        
                 
