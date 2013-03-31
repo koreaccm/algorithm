@@ -44,6 +44,7 @@ def hcluster(rows, distance=pearson):
     distances={}
     currentclustid=-1
     
+    #python class에 대한 기본 공부필요함. @codeacademy
     clust=[bicluster(row[i], id=i) for i in range(len(rows))]
     
     # clust에 2개 이상의 리스트가 존재하면,
@@ -52,6 +53,9 @@ def hcluster(rows, distance=pearson):
         lowestpair=(0,1)
         # class bicluste 중  __init__ 에서 미리 정의한 부분이 나옴
         closest=distance(clust[0].vec, clust[1].vec)
-        
-        
+ 
+        for i in range(len(clust)):
+            for j in range(i+1, len(clust)):
+                if (clust[i]).id, clust[j].id) no in distances:
+                    
                 
