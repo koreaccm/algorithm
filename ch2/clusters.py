@@ -10,7 +10,7 @@ def readfile(filename):
     rownames = []
     data = []
     
-    for line in lines[1]:
+    for line in lines[1:]:
         # p 는 tab를 구분기준으로 삼고 나누어 column(0 to end) 생성함
         p = line.strip().split('\t')
         rownames.append(p[0])
@@ -36,8 +36,8 @@ def pearson(v1, v2):
     num = pSum - (sum1 * sum2 / len(v1))
     
     # v1, v2 제곱의 합
-    sum1Sq = sum([pow(v1, 2) for v in v1])
-    sum2Sq = sum([pow(v2, 2) for v in v2])
+    sum1Sq = sum([pow(v, 2) for v in v1])
+    sum2Sq = sum([pow(v, 2) for v in v2])
     # 분모: v1 분산 * v2 분산(Variance)에 스퀘어루트 = Standard Deviation(표준편차)
     den = sqrt((sum1Sq - pow(sum1, 2) / len(v1)) * (sum2Sq - pow(sum2, 2) / len(v2)))
     if den == 0: return 0
@@ -83,7 +83,7 @@ def hcluster(rows, distance = pearson):
                         lowestpair = (i, j)
         
         # 두 군집간 평균계산
-        mergevec = [(clust[lowestpair[0]].vec[i] + clust[lowestpair[1].vec[i]]) / 2.0 for i in range(len(clust[0].vec))]
+        mergevec = [(clust[lowestpair[0]].vec[i] + clust[lowestpair[1]].vec[i]) / 2.0 for i in range(len(clust[0].vec))]
         
         # 새로운 군집을 생성
         newcluster = bicluster(mergevec, left = clust[lowestpair[0]], right = clust[lowestpair[1]], distance = closest, id = currentclustid)
@@ -95,6 +95,22 @@ def hcluster(rows, distance = pearson):
         clust.append(newcluster)
         
     return clust[0]
-        
+
+def printclust(clust, labels = None, n = 0):
+    # 들여쓰기
+    for i in range(n): print '   ',
+    if clust.id < 0:
+        # id 값이 음수면, 트리의 브랜치임
+        print '-'
+    else:
+        # id값이 양수면, 트리의 종점임
+        # label 에는 blognames가 들어감
+        if labels == None: print clust.id
+        else: print labels[clust.id]
+    
+    # 우측과 좌측 브랜치를 출력
+    if clust.left != None: printclust(clust.left, labels = labels, n = n + 1)
+    if clust.right != None: printclust(clust.right, labels = labels, n = n + 1)
+    
                         
                 
