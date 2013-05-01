@@ -56,45 +56,58 @@ class bicluster:
         self.id = id
         self.distance = distance
 
+# 가로줄 비교 통한 군집화
 def hcluster(rows, distance = pearson):
     distances = {}
     currentclustid = -1
     
-    # 초기 군집들을 각 가로줄에서 생성함
+    # rows == data 블로그의 단어 출현수를 나타내는 rows들 
+    # 변수 data에 저장한 값들을 bicluster class로 생성. clust[0].vec, clust[1].vec ...
     clust = [bicluster(rows[i], id = i) for i in range(len(rows))]
     
-    # clust에 2개 이상의 리스트가 존재하면,
+    # clust에 1개만 남을 때까지 반복,
     while len(clust) > 1:
-        # 최저 좌표 한 쌍은 row=0, col=1
+        # 기본 1쌍을 설정해둠
         lowestpair = (0, 1)
-        # class bicluster 중  __init__ 에서 미리 정의한 부분이 나옴
-        # clust[0], [1] 사이의  pearson() 값 저장
         closest = distance(clust[0].vec, clust[1].vec)
         
-        # 가장 작은 거리값을 가지는 쌍을 찾는 루프    
+        # 가장 작은 거리값을 가지는 쌍을 찾는 루프. 
         for i in range(len(clust)):
-            # clust[1] ~ 끝까지 
+            # len(clust) 는 0~99. 총 100개의 블로그이므로.
+            # clust[i].vec = 각 단어들의 빈도 수 저장.   len(clust[i].vec) = 706개   
+            # (0, 1), (0, 2), (0, 3), ... ,(0, 99). 
+            # (1, 2), (1, 3), (1,4), ... , (1, 99)
+            # (98, 99)
             for j in range(i + 1, len(clust)):
                 if (clust[i].id, clust[j].id) not in distances:
+                    # distances[(0,1)] = clust[0].
                     distances[(clust[i].id, clust[j].id)] = distance(clust[i].vec, clust[j].vec)
                     d = distances[clust[i].id, clust[j].id]
                     if d < closest:
                         closest = d
                         lowestpair = (i, j)
         
-        # 두 군집간 평균계산
+        # loop 돌고나면 closest, lowestpair 값이 하나만 남게 됨. 가장 유사한 한 쌍. 
+        # 그 한 쌍의 vec 값들을 가지고 평균계산하여 list에 저장
         mergevec = [(clust[lowestpair[0]].vec[i] + clust[lowestpair[1]].vec[i]) / 2.0 for i in range(len(clust[0].vec))]
         
-        # 새로운 군집을 생성
+        # 다시 그 한 쌍으로 새로운 군집을 생성. 그 군집을 다시 넣어 나머지 블로그들과 비교하기 위함. 그래서 mergevec 값을 구해둔 것임
+        # left / right 값이 있음. (x, y)에서 lowestpair[0] == x, lowestpair[1] == y 
         newcluster = bicluster(mergevec, left = clust[lowestpair[0]], right = clust[lowestpair[1]], distance = closest, id = currentclustid)
         
         # 원래의 집합 안에 포함되지 않은 군집 id들은 음수임
         currentclustid -= 1
+        # 최저 한 쌍으로 나온 값을 clust에서 삭제. while 구문 아래이므로.
         del clust[lowestpair[1]]
         del clust[lowestpair[0]]
+        #그리고 최저 한 쌍으로 새로 만든 군집을 clust에 삽입.
         clust.append(newcluster)
-        
+    
+    # while 이 끝나면 최종으로 남은 하나의 군집을 return
+    # 최종 남은 군집은 새로 묶어낸 가장 큰 군집이므로 id는 음수값을 가질 수 밖에 없음 
     return clust[0]
+
+
 
 def printclust(clust, labels = None, n = 0):
     # 들여쓰기
@@ -111,6 +124,7 @@ def printclust(clust, labels = None, n = 0):
     # 우측과 좌측 브랜치를 출력
     if clust.left != None: printclust(clust.left, labels = labels, n = n + 1)
     if clust.right != None: printclust(clust.right, labels = labels, n = n + 1)
+
     
 from PIL import Image, ImageDraw
 
@@ -158,4 +172,55 @@ def drawnode(draw, clust, x, y, scaling, labels):
         draw.text((x + 5, y - 7), labels[clust.id], (0, 0, 0))
          
               
-                
+def rotatematrix(data):
+    newdata = []
+    for i in range(len(data[0])):
+        newrow = [data[j][i] for j in range(len(data))]
+        newdata.append(newrow)
+    return newdata
+
+
+
+import random
+
+def kcluster(rows, distance = pearson, k = 4):
+    # 가로줄마다에 들어있는 값 중 최대, 최소값을 구함, for 706 times(== 총 단어 수)
+    ranges = [(min([row[i] for row in rows]), max([row[i] for row in rows])) for i in range(len(rows[0]))]
+    # range "최대값 - 최소값"  *  랜덤값 것들의 리스트의 리스트
+    # 임의로 k개의 중심점을 생성
+    clusters = [[random.random() * (ranges[i][1] - ranges[i][0]) for i in range(len(rows[0]))] for j in range(k)]
+    
+    lastmatches=None
+    for t in range(100):
+        print 'Iteration %d' % t
+        bestmatches = [[] for i in range(k)]
+        
+        #각 가로줄별로 가장 근접한 중심점 찾기
+        for j in range(len(rows)):
+            row = rows[j]
+            bestmatch = 0
+            for i in range(k):
+                d = distance(clusters[i], row)
+                if d < distance(clusters[bestmatch], row): bestmatch = 1
+            bestmatches[bestmatch].append(j)
+        
+        # 이전과 같은 결과라면 완료시킴    
+        if bestmatches == lastmatches: break
+        lastmatches = bestmatches
+            
+            # 중심점을 멤버들의 평균으로 이동시킴
+        for i in range(k):
+            avgs = [0.0] * len(rows[0])
+            if len(bestmatches[i]) > 0:
+                for rowid in bestmatches[i]:
+                    for m in range(len(rows[rowid])):
+                        avgs[m] += rows[rowid][m]
+                for j in range(len(avgs)):
+                    avgs[j] /= len(bestmatches[i])
+                clusters[i] = avgs
+   
+    # 결국 id를 반환하는 셈                 
+    return bestmatches
+
+            
+            
