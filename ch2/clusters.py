@@ -184,7 +184,8 @@ def rotatematrix(data):
 import random
 
 def kcluster(rows, distance = pearson, k = 4):
-    # 가로줄마다에 들어있는 값 중 최대, 최소값을 구함, for 706 times(== 총 단어 수)
+    # 각 가로줄마다에 들어있는 값 중 최대, 최소값을 구함, for 706 times(== 총 단어 수)
+    # row[i] 의 데이터 형태는 결국 좌표인 셈. (row번째 가로줄에 i번째 세로줄의 값)???
     ranges = [(min([row[i] for row in rows]), max([row[i] for row in rows])) for i in range(len(rows[0]))]
     # range "최대값 - 최소값"  *  랜덤값 것들의 리스트의 리스트
     # 임의로 k개의 중심점을 생성
